@@ -5,7 +5,7 @@ $(document).ready(function () {
 
     function citySearch(city) {
         //api.openweathermap.org/data/2.5/weather?q={city name}&appid={your api key}
-
+        city = $(this).attr("data-name");
         let key = "bf81dc4410bae4c75c0172966d86af60";
         let queryURL = "https://api.openweathermap.org/data/2.5/weather?q=" + city + "&units=imperial&appid=" + key;
         let forecastURL = "https://api.openweathermap.org/data/2.5/forecast?q=" + city + "&units=imperial&appid=" + key;
@@ -53,7 +53,7 @@ $(document).ready(function () {
 
     };
 
-    
+
 
     $(".btn-primary").on("click", function (event) {
 
@@ -75,32 +75,27 @@ $(document).ready(function () {
     });
 
     function renderHistory() {
-        // myStringVal = localStorage.get("city");
-        // cityObj = jSONParse(myStringVal)
-        // myArray = cityObj.cities
-        // Get city from localStorage
-        // For each value in city.cities do stuff
-        
+
         $("#history").innerHTML = "";
-        
+
         //render a new li for each array
         for (let i = 0; i < historyArray.length; i++) {
             //store value of array
             let history = historyArray[i];
+            console.log(history);
             let li = $("<li>");
             // add input to the li
             li.text(history);
+            //adding class called clickable
+            li.addClass("clickable");
+            // adding a data attribute
+            li.attr("data-name", historyArray[i]);
             //place the li into the ul 
             $("#history").append(li);
         }
-        
-        
+
+
     };
-    // render function
-    // checks for city array in local storage
-    // json.parse city array
-    // for each city in array add a html element in history
-    // For each of your history html elements add an event handler to run citySearch(city)
 
     function storeHistory() {
         // store the history of cities into an array
@@ -111,7 +106,7 @@ $(document).ready(function () {
 
 
         let storedCities = JSON.parse(localStorage.getItem("cities"));
-        if(storedCities !== null) {
+        if (storedCities !== null) {
             // If m retrieved, replace with the new array
             historyArray = storedCities;
         }
@@ -119,7 +114,8 @@ $(document).ready(function () {
         renderHistory();
     };
 
-
+    // Adding a click event listener to all elements with a class of "clickable"
+    $(document).on("click", ".clickable", citySearch);
 
 
 });
