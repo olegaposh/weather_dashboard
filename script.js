@@ -19,13 +19,19 @@ $(document).ready(function () {
             //console.log(data)
             // pulled current weather into p elements
             let currentCity = $("<h1>").text(city);
+
+            //display current date
+            let currentDay = new Date(data.dt * 1000);
+            let currDayString = (currentDay.getMonth() + 1) + "/" + (currentDay.getDate()) + "/" + currentDay.getFullYear();
+            let pCurrentDay = $("<p>").text(currDayString);
+            // Display current Temp, humidity, speed, and icon
             let currentTemp = $("<p>").text("Temperature: " + data.main.temp + "° F");
             let currentHumid = $("<p>").text("Humidity: " + data.main.humidity + "%");
             let currentWindSpeed = $("<p>").text("Wind Speed: " + data.wind.speed + " MPH");
             let icon = $("<img>").attr("src", "http://openweathermap.org/img/wn/" + data.weather[0].icon + "@2x.png");
             
             $("#current").empty();
-            $("#current").append(currentCity, currentTemp, currentHumid, currentWindSpeed, icon);
+            $("#current").append(currentCity, pCurrentDay, currentTemp, currentHumid, currentWindSpeed, icon);
 
             // Grab coordinates 
             let lati = data.coord.lat;

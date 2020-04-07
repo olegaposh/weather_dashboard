@@ -50,8 +50,8 @@ img {
 .col-sm {
 
     border: 10px solid #37E572;
-border-radius: 0px;
-background-color: teal;
-opacity: .4;
+    order-radius: 0px;
+    background-color: teal;
+    
 }
 
