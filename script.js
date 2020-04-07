@@ -4,9 +4,7 @@ $(document).ready(function () {
     retrieveHistory();
 
     function citySearch(city) {
-        //api.openweathermap.org/data/2.5/weather?q={city name}&appid={your api key}
-        //This grabs the city that was clicked by grabbing the data-name value 
-        city = $(this).attr("data-name");
+        
         let key = "bf81dc4410bae4c75c0172966d86af60";
         // This URL grabs the current weather
         let queryURL = "https://api.openweathermap.org/data/2.5/weather?q=" + city + "&units=imperial&appid=" + key;
@@ -20,7 +18,7 @@ $(document).ready(function () {
         }).then(function (data) {
             //console.log(data)
             // pulled current weather into p elements
-            let currentTemp = $("<p>").text("Temperature: " + data.main.temp + " F");
+            let currentTemp = $("<p>").text("Temperature: " + data.main.temp + "° F");
             let currentHumid = $("<p>").text("Humidity: " + data.main.humidity + "%");
             let currentWindSpeed = $("<p>").text("Wind Speed: " + data.wind.speed + " MPH");
             let icon = $("<img>").attr("src", "http://openweathermap.org/img/wn/" + data.weather[0].icon + "@2x.png");
@@ -41,6 +39,8 @@ $(document).ready(function () {
                 currentUV = $("<p>").text("UV Index: " + data.current.uvi);
                 //Display UV index 
                 $("#current").append(currentUV);
+
+
             });
 
         });
@@ -73,10 +73,9 @@ $(document).ready(function () {
 
 
 
-    $(".btn-primary").on("click", function (event) {
-
+    $( "#userInput" ).submit(function( event ) {
         event.preventDefault();
-
+        // store input
         let inputText = $("#userInput").val()
         let city = inputText;
         // return from function if submitted blank
@@ -85,16 +84,29 @@ $(document).ready(function () {
         }
 
         historyArray.push(city);
+        //when clicked pulls current weather
         citySearch(city);
-        inputText = "";
+        //inputText = "";
 
         storeHistory();
         renderHistory();
     });
 
-    function renderHistory() {
+    $(document).on('keypress',function(e) {
+        if(e.which == 13) {
+            $( "#userInput" ).submit();
+        }
+    });
 
-        $("#history").innerHTML = "";
+    $(".btn-primary").on("click", function (event) {
+        $( "#userInput" ).submit();
+        
+    });
+
+    function renderHistory() {
+        // keep it fresh and clear then buld new li's
+        $("#history").html("");
+        
 
         //render a new li for each array
         for (let i = 0; i < historyArray.length; i++) {
@@ -114,12 +126,12 @@ $(document).ready(function () {
 
 
     };
-
+    // store the city in localstorage
     function storeHistory() {
         // store the history of cities into an array
         localStorage.setItem("cities", JSON.stringify(historyArray));
     };
-
+    //pull saved cities
     function retrieveHistory() {
 
 
@@ -133,7 +145,16 @@ $(document).ready(function () {
     };
 
     // Adding a click event listener to all elements with a class of "clickable"
-    $(document).on("click", ".clickable", citySearch);
+    $(document).on("click", ".clickable", function() {
+        let city = $(this).attr("data-name");
+        citySearch(city);
+    });
+
+    //clear button
+    $("#button").on("click", function(){
+        localStorage.clear();
+        location.reload();
+     });
 
 
 });
