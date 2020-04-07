@@ -2,9 +2,9 @@ $(document).ready(function () {
 
     let historyArray = [];
     retrieveHistory();
-
+    //runs ajaxes, displayes current weather and forecast
     function citySearch(city) {
-        
+
         let key = "bf81dc4410bae4c75c0172966d86af60";
         // This URL grabs the current weather
         let queryURL = "https://api.openweathermap.org/data/2.5/weather?q=" + city + "&units=imperial&appid=" + key;
@@ -29,30 +29,37 @@ $(document).ready(function () {
             let currentHumid = $("<p>").text("Humidity: " + data.main.humidity + "%");
             let currentWindSpeed = $("<p>").text("Wind Speed: " + data.wind.speed + " MPH");
             let icon = $("<img>").attr("src", "http://openweathermap.org/img/wn/" + data.weather[0].icon + "@2x.png");
-            
+
             $("#current").empty();
             $("#current").append(currentCity, pCurrentDay, currentTemp, currentHumid, currentWindSpeed, icon);
 
             // Grab coordinates 
             let lati = data.coord.lat;
             let long = data.coord.lon;
-            
+
             // This API pulls coordinates and will return the UV index 
             $.ajax({
-                url:"https://api.openweathermap.org/data/2.5/onecall?lat="+lati+"&"+"lon="+long+"&appid="+key,
+                url: "https://api.openweathermap.org/data/2.5/onecall?lat=" + lati + "&" + "lon=" + long + "&appid=" + key,
                 method: "GET"
-            }).then(function(data) {
+            }).then(function (data) {
                 //console.log(data);
-                currentUV = $("<p>").text("UV Index: " + data.current.uvi);
-                // if UV 
+                let UV = data.current.uvi
+                let currentUV = $("<p>").text("UV Index: " + UV);
+                //dynamic colored UV icon
 
-
+                if (UV < 5) {
+                    // green 
+                    currentUV.addClass("badge badge-success");
+                } else if (UV > 7) {
+                    // red
+                    currentUV.addClass("badge badge-danger");
+                } else {
+                    // yellow 
+                    currentUV.addClass("badge badge-warning")
+                }
                 //Display UV index 
                 $("#current").append(currentUV);
-
-
             });
-
         });
 
         $.ajax({
@@ -60,8 +67,8 @@ $(document).ready(function () {
             method: "GET"
         }).then(function (data) {
 
-
             //console.log(data);
+            // Display the forecast, 
             for (let i = 5, j = 0; i < 40; i += 8, j++) {
                 let classes = [".one", ".two", ".three", ".four", ".five"];
                 let myDate = new Date(data.list[i].dt * 1000);
@@ -80,10 +87,8 @@ $(document).ready(function () {
         });
 
     };
-
-
-
-    $( "#userInput" ).submit(function( event ) {
+    // When user hits enter
+    $("#userInput").submit(function (event) {
         event.preventDefault();
         // store input
         let inputText = $("#userInput").val()
@@ -92,7 +97,7 @@ $(document).ready(function () {
         if (city === "") {
             return;
         }
-
+        // add city to array
         historyArray.push(city);
         //when clicked pulls current weather
         citySearch(city);
@@ -102,27 +107,27 @@ $(document).ready(function () {
         renderHistory();
     });
 
-    $(document).on('keypress',function(e) {
-        if(e.which == 13) {
-            $( "#userInput" ).submit();
+    $(document).on('keypress', function (e) {
+        if (e.which == 13) {
+            $("#userInput").submit();
         }
     });
-
+    // Or if user clicks search
     $(".btn-primary").on("click", function (event) {
-        $( "#userInput" ).submit();
-        
+        $("#userInput").submit();
+
     });
 
     function renderHistory() {
         // keep it fresh and clear then buld new li's
         $("#history").html("");
-        
+
 
         //render a new li for each array
         for (let i = 0; i < historyArray.length; i++) {
             //store value of array
             let history = historyArray[i];
-            
+
             let li = $("<li>");
             // add input to the li
             li.text(history);
@@ -141,10 +146,10 @@ $(document).ready(function () {
         // store the history of cities into an array
         localStorage.setItem("cities", JSON.stringify(historyArray));
     };
-    //pull saved cities
+
     function retrieveHistory() {
 
-
+        //pull saved cities
         let storedCities = JSON.parse(localStorage.getItem("cities"));
         if (storedCities !== null) {
             // If m retrieved, replace with the new array
@@ -155,16 +160,16 @@ $(document).ready(function () {
     };
 
     // Adding a click event listener to all elements with a class of "clickable"
-    $(document).on("click", ".clickable", function() {
+    $(document).on("click", ".clickable", function () {
         let city = $(this).attr("data-name");
         citySearch(city);
     });
 
     //clear button
-    $("#button").on("click", function(){
+    $("#button").on("click", function () {
         localStorage.clear();
         location.reload();
-     });
+    });
 
 
 });
