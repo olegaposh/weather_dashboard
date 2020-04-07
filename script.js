@@ -23,7 +23,7 @@ $(document).ready(function () {
             let currentHumid = $("<p>").text("Humidity: " + data.main.humidity + "%");
             let currentWindSpeed = $("<p>").text("Wind Speed: " + data.wind.speed + " MPH");
             let icon = $("<img>").attr("src", "http://openweathermap.org/img/wn/" + data.weather[0].icon + "@2x.png");
-            icon.attr("style", "max-width: 70px");
+            
             $("#current").empty();
             $("#current").append(currentCity, currentTemp, currentHumid, currentWindSpeed, icon);
 
@@ -62,11 +62,11 @@ $(document).ready(function () {
                 let dateString = (myDate.getMonth() + 1) + "/" + (myDate.getDate()) + "/" + myDate.getFullYear();
 
                 let temp = $("<p>").text(data.list[i].main.temp + "° F");
-                let date = $("<p>").text(dateString);
                 let humid = $("<p>").text("Humidity: " + data.list[i].main.humidity + "%");
+                let date = $("<p>").text(dateString);
 
                 $(classes[j]).empty();
-                $(classes[j]).append(temp, date, humid);
+                $(classes[j]).append(temp, humid, date);
 
 
             }
