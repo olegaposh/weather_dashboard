@@ -5,9 +5,12 @@ $(document).ready(function () {
 
     function citySearch(city) {
         //api.openweathermap.org/data/2.5/weather?q={city name}&appid={your api key}
+        //This grabs the city that was clicked by grabbing the data-name value 
         city = $(this).attr("data-name");
         let key = "bf81dc4410bae4c75c0172966d86af60";
+        // This URL grabs the current weather
         let queryURL = "https://api.openweathermap.org/data/2.5/weather?q=" + city + "&units=imperial&appid=" + key;
+        //This URL grabs the 5 day forecast 
         let forecastURL = "https://api.openweathermap.org/data/2.5/forecast?q=" + city + "&units=imperial&appid=" + key;
 
 
@@ -15,8 +18,8 @@ $(document).ready(function () {
             url: queryURL,
             method: "GET"
         }).then(function (data) {
-            console.log(data)
-            // pulled content into p elements
+            //console.log(data)
+            // pulled current weather into p elements
             let currentTemp = $("<p>").text("Temperature: " + data.main.temp + " F");
             let currentHumid = $("<p>").text("Humidity: " + data.main.humidity + "%");
             let currentWindSpeed = $("<p>").text("Wind Speed: " + data.wind.speed + " MPH");
@@ -24,6 +27,21 @@ $(document).ready(function () {
             icon.attr("style", "max-width: 70px");
             $("#current").empty();
             $("#current").append(currentTemp, currentHumid, currentWindSpeed, icon);
+
+            // Grab coordinates 
+            let lati = data.coord.lat;
+            let long = data.coord.lon;
+            
+            // This API pulls coordinates and will return the UV index 
+            $.ajax({
+                url:"https://api.openweathermap.org/data/2.5/onecall?lat="+lati+"&"+"lon="+long+"&appid="+key,
+                method: "GET"
+            }).then(function(data) {
+                //console.log(data);
+                currentUV = $("<p>").text("UV Index: " + data.current.uvi);
+                //Display UV index 
+                $("#current").append(currentUV);
+            });
 
         });
 
@@ -33,7 +51,7 @@ $(document).ready(function () {
         }).then(function (data) {
 
 
-            console.log(data);
+            //console.log(data);
             for (let i = 5, j = 0; i < 40; i += 8, j++) {
                 let classes = [".one", ".two", ".three", ".four", ".five"];
                 let myDate = new Date(data.list[i].dt * 1000);
@@ -82,7 +100,7 @@ $(document).ready(function () {
         for (let i = 0; i < historyArray.length; i++) {
             //store value of array
             let history = historyArray[i];
-            console.log(history);
+            
             let li = $("<li>");
             // add input to the li
             li.text(history);
