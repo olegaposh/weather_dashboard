@@ -101,8 +101,9 @@ $(document).ready(function () {
         historyArray.push(city);
         //when clicked pulls current weather
         citySearch(city);
-        //inputText = "";
-
+        //clear input
+        $("#userInput").val("");
+        
         storeHistory();
         renderHistory();
     });
