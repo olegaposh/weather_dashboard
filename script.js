@@ -1,6 +1,7 @@
 $(document).ready(function () {
 
     let historyArray = [];
+
     retrieveHistory();
     //runs ajaxes, displayes current weather and forecast
     function citySearch(city) {
@@ -103,7 +104,7 @@ $(document).ready(function () {
         citySearch(city);
         //clear input
         $("#userInput").val("");
-        
+
         storeHistory();
         renderHistory();
     });
@@ -119,11 +120,11 @@ $(document).ready(function () {
 
     });
 
-    function renderHistory() {
+    function renderHistory(last) {
         // keep it fresh and clear then buld new li's
         $("#history").html("");
-
-
+        //pulls up the last city searched 
+        citySearch(last);
         //render a new li for each array
         for (let i = 0; i < historyArray.length; i++) {
             //store value of array
@@ -153,11 +154,17 @@ $(document).ready(function () {
         //pull saved cities
         let storedCities = JSON.parse(localStorage.getItem("cities"));
         if (storedCities !== null) {
-            // If m retrieved, replace with the new array
+            // If array is not empty, replace with the new array
             historyArray = storedCities;
+
+            
+            let lastArrayItem = historyArray[historyArray.length -1];
+            console.log(lastArrayItem);
+
+            renderHistory(lastArrayItem);
         }
 
-        renderHistory();
+        
     };
 
     // Adding a click event listener to all elements with a class of "clickable"
